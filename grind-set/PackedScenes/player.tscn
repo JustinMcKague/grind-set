@@ -1,0 +1,32 @@
+[gd_scene load_steps=6 format=3 uid="uid://hmq8d0c2bdn5"]
+
+[ext_resource type="Script" uid="uid://xn556le67n2x" path="res://PackedScenes/player.gd" id="1_2h0jo"]
+[ext_resource type="Texture2D" uid="uid://cubfxgj5akppb" path="res://Sprites/rock base.png" id="1_wv77m"]
+[ext_resource type="Texture2D" uid="uid://b5eolbqtebo6h" path="res://Sprites/white box.png" id="2_c75oi"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2h0jo"]
+size = Vector2(56, 56)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_c75oi"]
+
+[node name="Player" type="Node2D" groups=["Player"]]
+
+[node name="CharacterBody2D" type="CharacterBody2D" parent="."]
+script = ExtResource("1_2h0jo")
+
+[node name="Mask" type="Sprite2D" parent="CharacterBody2D"]
+clip_children = 1
+position = Vector2(-2.3841858e-07, -3.8146973e-06)
+texture = ExtResource("2_c75oi")
+
+[node name="Rock Base" type="Sprite2D" parent="CharacterBody2D/Mask"]
+position = Vector2(0.46666843, -3.6358833e-06)
+scale = Vector2(0.4741936, 0.46666667)
+texture = ExtResource("1_wv77m")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D"]
+visible = false
+shape = SubResource("RectangleShape2D_2h0jo")
+
+[node name="Rock Face" type="AnimatedSprite2D" parent="CharacterBody2D"]
+sprite_frames = SubResource("SpriteFrames_c75oi")
