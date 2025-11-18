@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://dvpmegqy40ouq"]
+[gd_scene load_steps=5 format=3 uid="uid://dvpmegqy40ouq"]
 
 [ext_resource type="Texture2D" uid="uid://b5eolbqtebo6h" path="res://Sprites/white box.png" id="1_txir4"]
 [ext_resource type="PackedScene" uid="uid://hmq8d0c2bdn5" path="res://PackedScenes/player.tscn" id="2_20fb8"]
+[ext_resource type="PackedScene" uid="uid://dmj761c26hjfb" path="res://PackedScenes/slab.tscn" id="3_ls2ju"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_20fb8"]
 size = Vector2(1171, 134)
@@ -21,3 +22,6 @@ texture = ExtResource("1_txir4")
 
 [node name="Player" parent="." instance=ExtResource("2_20fb8")]
 position = Vector2(384, 143)
+
+[node name="Slab" parent="." instance=ExtResource("3_ls2ju")]
+position = Vector2(840, 463)
