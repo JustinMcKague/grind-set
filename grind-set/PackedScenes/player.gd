@@ -30,7 +30,10 @@ var initial_scale: Vector2
 
 var on_slab = false
 
+var current_offset
+
 func _ready() -> void:
+	GameManager.player_ref = self
 	current_height = initial_height
 	initial_coll_height = collision.shape.size.y
 	update_player_height()
@@ -54,6 +57,7 @@ func _physics_process(delta: float) -> void:
 	jump()
 	grind(delta)
 	update_player_height()
+	
 	if velocity.x == 0:
 		right_particles.emitting = false
 		left_particles.emitting = false
@@ -63,10 +67,6 @@ func _physics_process(delta: float) -> void:
 	
 func grind(delta):
 	if is_sliding:
-		var total_stone = current_height
-		for slab in current_slabs:
-			total_stone += slab.height
-		
 		var amount_to_grind = decay_rate * delta
 		
 		for slab in current_slabs:
@@ -104,19 +104,18 @@ func update_player_height():
 	sprite.global_scale.y = current_height / initial_height
 	
 	# attach new slab sprites to bottom of player
-	var current_offset = current_height
+	current_offset = current_height
 	
 	for i in range(current_slabs.size() -1, -1, -1):
 		var slab = current_slabs[i]
 		var slab_sprite = Sprite2D.new()
 		slab_sprite.texture = slab.texture
-		slab_sprite.scale.y = slab.height / slab_sprite.texture.get_height()
-		slab_sprite.scale.x = sprite.global_scale.x
+		slab_sprite.scale.y = slab.height / slab_sprite.texture.get_height() * 2
+		slab_sprite.global_scale.x = sprite.global_scale.x * 2
 		current_offset += slab.height
-		slab_sprite.position.y = current_offset
+		slab_sprite.position.y = current_offset - ((slab.height - slab.initial_slab_height) / 2)
 		slab_parent.add_child(slab_sprite)
-		
-		
+	
 	var total_height = current_height
 	for slab in current_slabs:
 		total_height += slab.height
