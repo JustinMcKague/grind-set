@@ -1,17 +1,15 @@
-[gd_scene load_steps=10 format=3 uid="uid://hmq8d0c2bdn5"]
+[gd_scene load_steps=8 format=3 uid="uid://hmq8d0c2bdn5"]
 
 [ext_resource type="Script" uid="uid://xn556le67n2x" path="res://PackedScenes/player.gd" id="1_2h0jo"]
 [ext_resource type="Texture2D" uid="uid://cubfxgj5akppb" path="res://Sprites/rock base.png" id="1_wv77m"]
-[ext_resource type="Texture2D" uid="uid://b5eolbqtebo6h" path="res://Sprites/white box.png" id="2_c75oi"]
-[ext_resource type="Script" uid="uid://ceo5fu6eeyqoq" path="res://PackedScenes/grind-down.gd" id="3_1cg3b"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2h0jo"]
-size = Vector2(56, 56)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_c75oi"]
+size = Vector2(120, 122)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1cg3b"]
-size = Vector2(56, 56)
+size = Vector2(120, 121)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_c75oi"]
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_1cg3b"]
 lifetime_randomness = 0.11
@@ -44,46 +42,45 @@ hue_variation_max = -2.2351742e-08
 
 [node name="CharacterBody2D" type="CharacterBody2D" parent="." node_paths=PackedStringArray("right_particles", "left_particles")]
 script = ExtResource("1_2h0jo")
+initial_height = 56.0
+decay_rate = 5.0
 right_particles = NodePath("Right Particles")
 left_particles = NodePath("Left Particles")
 
-[node name="Mask" type="Sprite2D" parent="CharacterBody2D"]
-clip_children = 1
-position = Vector2(-2.3841858e-07, -3.8146973e-06)
-texture = ExtResource("2_c75oi")
-script = ExtResource("3_1cg3b")
-
-[node name="Rock Base" type="Sprite2D" parent="CharacterBody2D/Mask"]
-position = Vector2(0.46666843, -3.6358833e-06)
-scale = Vector2(0.4741936, 0.46666667)
+[node name="Rock Base" type="Sprite2D" parent="CharacterBody2D"]
+position = Vector2(0.4666682, -7.4505806e-06)
 texture = ExtResource("1_wv77m")
 
+[node name="SlabParent" type="Node2D" parent="CharacterBody2D/Rock Base"]
+position = Vector2(-0.4666682, 7.4505806e-06)
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D"]
-visible = false
+position = Vector2(1, 0)
 shape = SubResource("RectangleShape2D_2h0jo")
+
+[node name="Detection" type="Area2D" parent="CharacterBody2D"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D/Detection"]
+visible = false
+position = Vector2(1, -0.5)
+shape = SubResource("RectangleShape2D_1cg3b")
 
 [node name="Rock Face" type="AnimatedSprite2D" parent="CharacterBody2D"]
 sprite_frames = SubResource("SpriteFrames_c75oi")
 
-[node name="Area2D" type="Area2D" parent="CharacterBody2D"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D/Area2D"]
-shape = SubResource("RectangleShape2D_1cg3b")
-
 [node name="Right Particles" type="GPUParticles2D" parent="CharacterBody2D"]
-position = Vector2(24, 28)
+position = Vector2(48, 60)
 emitting = false
 amount = 15
 lifetime = 0.5
 process_material = SubResource("ParticleProcessMaterial_1cg3b")
 
 [node name="Left Particles" type="GPUParticles2D" parent="CharacterBody2D"]
-position = Vector2(-22, 28)
+position = Vector2(-46, 60)
 emitting = false
 amount = 15
 lifetime = 0.5
 process_material = SubResource("ParticleProcessMaterial_t6iw1")
 
-[connection signal="grind" from="CharacterBody2D" to="CharacterBody2D/Mask" method="_on_character_body_2d_grind"]
-[connection signal="area_entered" from="CharacterBody2D/Area2D" to="CharacterBody2D" method="_on_area_2d_area_entered"]
-[connection signal="area_exited" from="CharacterBody2D/Area2D" to="CharacterBody2D" method="_on_area_2d_area_exited"]
+[connection signal="area_entered" from="CharacterBody2D/Detection" to="CharacterBody2D" method="_on_area_2d_area_entered"]
+[connection signal="area_exited" from="CharacterBody2D/Detection" to="CharacterBody2D" method="_on_area_2d_area_exited"]

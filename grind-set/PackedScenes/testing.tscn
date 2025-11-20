@@ -1,13 +1,14 @@
-[gd_scene load_steps=5 format=3 uid="uid://dvpmegqy40ouq"]
+[gd_scene load_steps=6 format=3 uid="uid://dvpmegqy40ouq"]
 
 [ext_resource type="Texture2D" uid="uid://b5eolbqtebo6h" path="res://Sprites/white box.png" id="1_txir4"]
 [ext_resource type="PackedScene" uid="uid://hmq8d0c2bdn5" path="res://PackedScenes/player.tscn" id="2_20fb8"]
 [ext_resource type="PackedScene" uid="uid://dmj761c26hjfb" path="res://PackedScenes/slab.tscn" id="3_ls2ju"]
+[ext_resource type="PackedScene" uid="uid://b2jrpseew6yvi" path="res://camera.tscn" id="4_qkoge"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_20fb8"]
 size = Vector2(1171, 134)
 
-[node name="Node2D" type="Node2D"]
+[node name="Test Scene" type="Node2D"]
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 
@@ -25,3 +26,7 @@ position = Vector2(384, 143)
 
 [node name="Slab" parent="." instance=ExtResource("3_ls2ju")]
 position = Vector2(840, 463)
+
+[node name="Camera" parent="." instance=ExtResource("4_qkoge")]
+position = Vector2(386, 2)
+cam_offset = Vector2(0, -250)
