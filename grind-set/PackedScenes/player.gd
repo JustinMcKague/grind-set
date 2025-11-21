@@ -20,17 +20,28 @@ var initial_coll_height: float
 @onready var collision = $CollisionShape2D
 @onready var sprite = $"Rock Base"
 @onready var slab_parent = $"Rock Base/SlabParent"
+@onready var raycast = $"Rock Base/RayCast2D"
 
 @export var right_particles: GPUParticles2D
 @export var left_particles: GPUParticles2D
+
+var player_height
 
 var slab_prefab = preload("res://PackedScenes/slab.tscn")
 
 var initial_scale: Vector2
 
 var on_slab = false
+@export var can_jump:bool = false
 
 var current_offset
+
+@onready var coyote_timer = $"Coyote Time"
+@onready var buffer = $"Jump Buffer"
+@onready var jump_cd = $"Jump CD"
+
+var max_jumps = 1
+var current_jumps = 0
 
 func _ready() -> void:
 	GameManager.player_ref = self
@@ -40,7 +51,10 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	var input_dir: Vector2 = movement()
-	
+	if not can_jump:
+		coyote_timer.stop()
+	if Input.is_action_just_pressed("jump") and not is_on_floor() and buffer.is_stopped():
+		buffer.start()
 	if input_dir != Vector2.ZERO:
 		acceleration(input_dir)
 		if is_on_floor():
@@ -53,11 +67,17 @@ func _physics_process(delta: float) -> void:
 		var tween = sprite.create_tween()
 		tween.tween_property(sprite, "skew", 0, 0.07)
 		is_sliding = false
-	move_and_slide()
-	jump()
+	
+	if can_jump and not is_on_floor() and coyote_timer.is_stopped():
+		coyote_timer.start()
+	handle_jump()
 	grind(delta)
 	update_player_height()
-	
+	move_and_slide() # MAKE SURE THIS IS BELOW THE JUMP FUNCTION
+	if is_on_floor():
+		coyote_timer.stop()
+		can_jump = true
+		current_jumps = 0
 	if velocity.x == 0:
 		right_particles.emitting = false
 		left_particles.emitting = false
@@ -120,6 +140,7 @@ func update_player_height():
 	for slab in current_slabs:
 		total_height += slab.height
 		
+	player_height = total_height
 	var new_coll_height = initial_coll_height * (total_height / initial_height)
 	collision.shape.size.y = new_coll_height
 	var offset = (initial_coll_height - new_coll_height) / 2
@@ -144,18 +165,28 @@ func acceleration(direction):
 func add_friction():
 	velocity = velocity.move_toward(Vector2.ZERO, friction)
 
-func jump():
-	if Input.is_action_just_pressed("jump") and is_on_floor():
-		right_particles.emitting = false
-		left_particles.emitting = false
-		initial_scale = sprite.scale
-		velocity.y = jump_power
-		var tween = create_tween()
-		tween.tween_property(sprite, "scale", sprite.scale * Vector2(1.5, 0.6), 0.025)
-		tween.tween_property(sprite, "scale", sprite.scale * Vector2(0.6, 1.5), 0.15)
-		tween.tween_property(sprite, "scale", initial_scale, 0.1)
+func handle_jump():
+	if jump_cd.time_left > 0:
+		pass
+	if Input.is_action_just_pressed("jump") and can_jump and current_jumps < max_jumps:
+		jump_cd.start()
+		can_jump = false
+		jump()
 	else:
 		velocity.y += gravity
+		
+func jump():
+	can_jump = false
+	current_jumps += 1
+	coyote_timer.stop()
+	right_particles.emitting = false
+	left_particles.emitting = false
+	initial_scale = sprite.scale
+	velocity.y = jump_power
+	var tween = create_tween()
+	tween.tween_property(sprite, "scale", sprite.scale * Vector2(1.5, 0.6), 0.025)
+	tween.tween_property(sprite, "scale", sprite.scale * Vector2(0.6, 1.5), 0.15)
+	tween.tween_property(sprite, "scale", initial_scale, 0.1)
 
 func _on_area_2d_area_entered(area: Area2D) -> void:
 	if area.is_in_group("Slab"):
@@ -169,3 +200,13 @@ func _on_area_2d_area_exited(area: Area2D) -> void:
 
 func game_over():
 	print("You lose.")
+
+func _on_coyote_time_timeout() -> void:
+	can_jump = false
+
+func _on_jump_buffer_timeout() -> void:
+	if is_on_floor():
+		jump()
+		buffer.stop()
+	else:
+		buffer.stop()
