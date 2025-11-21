@@ -54,6 +54,11 @@ texture = ExtResource("1_wv77m")
 [node name="SlabParent" type="Node2D" parent="CharacterBody2D/Rock Base"]
 position = Vector2(-0.4666682, 7.4505806e-06)
 
+[node name="RayCast2D" type="RayCast2D" parent="CharacterBody2D/Rock Base"]
+position = Vector2(-0.4666682, 7.4505806e-06)
+target_position = Vector2(0, 63)
+collide_with_areas = true
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D"]
 position = Vector2(1, 0)
 shape = SubResource("RectangleShape2D_2h0jo")
@@ -82,5 +87,15 @@ amount = 15
 lifetime = 0.5
 process_material = SubResource("ParticleProcessMaterial_t6iw1")
 
+[node name="Coyote Time" type="Timer" parent="CharacterBody2D"]
+wait_time = 0.15
+
+[node name="Jump Buffer" type="Timer" parent="CharacterBody2D"]
+wait_time = 0.1
+
+[node name="Jump CD" type="Timer" parent="CharacterBody2D"]
+
 [connection signal="area_entered" from="CharacterBody2D/Detection" to="CharacterBody2D" method="_on_area_2d_area_entered"]
 [connection signal="area_exited" from="CharacterBody2D/Detection" to="CharacterBody2D" method="_on_area_2d_area_exited"]
+[connection signal="timeout" from="CharacterBody2D/Coyote Time" to="CharacterBody2D" method="_on_coyote_time_timeout"]
+[connection signal="timeout" from="CharacterBody2D/Jump Buffer" to="CharacterBody2D" method="_on_jump_buffer_timeout"]

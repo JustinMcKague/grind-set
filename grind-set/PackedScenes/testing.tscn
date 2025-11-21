@@ -10,9 +10,9 @@ size = Vector2(1171, 134)
 
 [node name="Test Scene" type="Node2D"]
 
-[node name="StaticBody2D" type="StaticBody2D" parent="."]
+[node name="StaticBody2D" type="StaticBody2D" parent="." groups=["Ground"]]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" groups=["Ground"]]
 position = Vector2(575.5, 538)
 shape = SubResource("RectangleShape2D_20fb8")
 
